@@ -1,1 +1,1 @@
-TEST
+The main goal of this project is to create a Sudoku puzzle generator with 3 difficulties to choose from (Easy, Normal, Hard). There'll be highlighted spaces that when filled in correctly, will give the user a boost, such as revealing a space. Disurptions will occur as the user plays, such as shaking the puzzle, or covering a filled square temporarily. The goal is to fill in the puzzle as quick as the user can, with time being added if a square is filled incorrectly.
