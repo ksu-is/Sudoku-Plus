@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pygame
+import time
 from sudokutools import generate_board
 
 pygame.init()
@@ -14,7 +15,7 @@ class Tile:
         self.selected = False
 
     def draw(self):
-        # Tile border
+        # Draw cell border
         pygame.draw.rect(self.window, (0, 0, 0), self.rect, 1)
 
         # Draw number
@@ -23,7 +24,7 @@ class Tile:
             text = font.render(str(self.value), True, (0, 0, 0))
             self.window.blit(text, (self.rect.x + 20, self.rect.y + 10))
 
-        # Highlight selection
+        # Draw selection highlight
         if self.selected:
             pygame.draw.rect(self.window, (0, 150, 255), self.rect, 3)
 
@@ -36,18 +37,26 @@ class Board:
             for r in range(9)
         ]
 
-    def draw(self):
+    def draw(self, elapsed_time):
         self.window.fill((255, 255, 255))
 
+        # Draw all tiles
         for r in range(9):
             for c in range(9):
                 self.tiles[r][c].draw()
 
-        # Thicker grid lines
+        # Draw thick grid lines
         for i in range(0, 10):
             width = 3 if i % 3 == 0 else 1
             pygame.draw.line(self.window, (0, 0, 0), (0, i * 60), (540, i * 60), width)
             pygame.draw.line(self.window, (0, 0, 0), (i * 60, 0), (i * 60, 540), width)
+
+        # Draw stopwatch time at bottom
+        font = pygame.font.SysFont("Bahnschrift", 40)
+        timer_text = font.render(elapsed_time, True, (0, 0, 0))
+
+        # Center it below grid
+        self.window.blit(timer_text, (270 - timer_text.get_width() // 2, 550))
 
         pygame.display.update()
 
@@ -67,14 +76,26 @@ class Board:
         return None
 
 def main():
-    win = pygame.display.set_mode((540, 540))
+    win = pygame.display.set_mode((540, 600))
     pygame.display.set_caption("Sudoku Puzzle")
+
     board = Board(win)
     selected = None
 
+    start_time = time.time()
+
     running = True
     while running:
-        board.draw()
+
+        # Compute stopwatch time
+        elapsed = int(time.time() - start_time)
+        elapsed_h = elapsed // 3600
+        elapsed_m = (elapsed % 3600) // 60
+        elapsed_s = elapsed % 60
+
+        elapsed_time_str = f"{elapsed_h:02d}:{elapsed_m:02d}:{elapsed_s:02d}"
+
+        board.draw(elapsed_time_str)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
